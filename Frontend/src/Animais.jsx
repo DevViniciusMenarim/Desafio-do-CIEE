@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "./api";
+import Swal from "sweetalert2";
 
 function Animais() {
   const [animais, setAnimais] = useState([]);
@@ -23,7 +24,8 @@ function Animais() {
       const resposta = await api.get("/animais");
       setAnimais(resposta.data);
     } catch (erro) {
-      alert("Erro ao buscar animais. Verifique o backend.");
+      console.error("Erro ao buscar animais:", erro);
+      Swal.fire("Erro", "Erro ao carregar lista de animais.", "error");
     }
   }
 
@@ -35,27 +37,39 @@ function Animais() {
           ...novoAnimal,
           id: idEditando,
         });
-        alert("Animal atualizado com sucesso!");
+        Swal.fire("Sucesso!", "Animal atualizado com sucesso.", "success");
       } else {
         await api.post("/animais", novoAnimal);
-        alert("Animal cadastrado com sucesso!");
+        Swal.fire("Sucesso!", "Animal cadastrado com sucesso.", "success");
       }
 
       limparFormulario();
       carregarAnimais();
     } catch (erro) {
       console.error("Erro ao salvar:", erro);
-      alert("Erro ao salvar animal.");
+      Swal.fire("Erro", "Ocorreu um erro ao salvar.", "error");
     }
   }
 
   async function deletarAnimal(id) {
-    if (confirm("Tem certeza que deseja excluir este animal?")) {
+    const result = await Swal.fire({
+      title: "Tem certeza?",
+      text: "Você não poderá reverter isso!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sim, excluir!",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (result.isConfirmed) {
       try {
         await api.delete(`/animais/${id}`);
+        Swal.fire("Deletado!", "O registro foi removido.", "success");
         carregarAnimais();
       } catch (erro) {
-        alert("Erro ao deletar.");
+        Swal.fire("Erro", "Erro ao deletar o animal.", "error");
       }
     }
   }
@@ -185,7 +199,7 @@ function Animais() {
       </div>
 
       <h4 className="mb-3">Animais Cadastrados</h4>
-      <table className="table table-striped table-hover bordered">
+      <table className="table table-striped table-hover">
         <thead className="table-dark">
           <tr>
             <th>Nome</th>

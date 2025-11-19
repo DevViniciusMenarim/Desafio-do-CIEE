@@ -7,9 +7,7 @@ function App() {
     <Router>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div className="container">
-          <a className="navbar-brand" href="#">
-            Zoo System
-          </a>
+          <a className="navbar-brand">Zoo System</a>
           <div className="collapse navbar-collapse">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
